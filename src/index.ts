@@ -67,6 +67,17 @@ const app = new Elysia()
     "/hihtml",
     () => `<div>Hi World<a href="https://youtube.com">asd</a></div>`
   )
+  .onAfterHandle(() => {
+    console.log("after handle");
+  })
+  .onBeforeHandle(() => {
+    console.log("before handle");
+  })
+  .get("/order", () => "hi order", {
+    beforeHandle() {
+      console.log("local before");
+    },
+  })
 
   .listen(3000);
 
