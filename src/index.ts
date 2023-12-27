@@ -43,7 +43,19 @@ const app = new Elysia()
     again: store.authUsersToken,
     bearerToken,
   }))
-  .listen(3001);
+
+  .get(
+    "/hello",
+    () => `<div>Hello Worldsss<a href="https://youtube.com">asd</a></div>`,
+    {
+      afterHandle({ response, set }) {
+        set.headers["Content-Type"] = "text/html; charset=utf8";
+      },
+    }
+  )
+  .get("/hi", () => `<div>Hi World<a href="https://youtube.com">asd</a></div>`)
+
+  .listen(3000);
 
 console.log(
   `🦊 Elysia is running at http://${app.server?.hostname}:${app.server?.port}`
