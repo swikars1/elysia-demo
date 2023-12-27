@@ -11,6 +11,14 @@ const setup = new Elysia({ name: "setup" })
     email: "asd@sd.d",
   });
 
+const setup2 = new Elysia().decorate("a12", "a");
+
+const child2 = new Elysia().use(setup2).get("/", ({ a12 }) => a12);
+
+// index.ts
+
+// child.ts
+
 const app = new Elysia()
   .use(setup.suffix("decorator", "setup").prefix("state", "authUsers"))
   .derive(({ store }) => {
