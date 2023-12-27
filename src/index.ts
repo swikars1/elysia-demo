@@ -1,4 +1,4 @@
-import { Elysia } from "elysia";
+import { Elysia, t } from "elysia";
 const setup = new Elysia({ name: "setup" })
   .decorate({
     argon: "a",
@@ -10,6 +10,14 @@ const setup = new Elysia({ name: "setup" })
     id: "1",
     email: "asd@sd.d",
   });
+
+// this doesnt work as stated in docs
+
+// const globalVali = new Elysia({ name: "globalvali" }).schema({
+//   query: t.Object({
+//     name: t.String(),
+//   }),
+// });
 
 const setup2 = new Elysia().decorate("a12", "a");
 
@@ -32,6 +40,7 @@ const app = new Elysia()
     authUserId: store.authUsersId,
     bearerToken,
   }))
+
   .get("/nullifytoken", ({ store }) => {
     store.authUsersToken = "";
     return {
@@ -48,8 +57,18 @@ const app = new Elysia()
     "/hello",
     () => `<div>Hello Worldsss<a href="https://youtube.com">asd</a></div>`,
     {
+      query: t.Object({
+        name: t.String(),
+      }),
       afterHandle({ response, set }) {
         set.headers["Content-Type"] = "text/html; charset=utf8";
+      },
+      beforeHandle({ query, set }) {
+        if (query.name !== "swikar") {
+          set.status = 400;
+          set.redirect = "nohtml";
+          return;
+        }
       },
     }
   )
@@ -67,12 +86,23 @@ const app = new Elysia()
     "/hihtml",
     () => `<div>Hi World<a href="https://youtube.com">asd</a></div>`
   )
+  //local validation
+  .get("/idvalidate/:id", ({ params: { id }, headers: { f } }) => id, {
+    params: t.Object({
+      id: t.Numeric(),
+    }),
+    headers: t.Object({
+      f: t.String(),
+    }),
+  })
+
   .onAfterHandle(() => {
     console.log("after handle");
   })
   .onBeforeHandle(() => {
     console.log("before handle");
   })
+
   .get("/order", () => "hi order", {
     beforeHandle() {
       console.log("local before");
