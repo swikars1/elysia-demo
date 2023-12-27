@@ -6,30 +6,37 @@ const setup = new Elysia({ name: "setup" })
     carbon: "c",
   })
   .state({
-    token: "87asdbj",
+    token: "initial-token",
     id: "1",
     email: "asd@sd.d",
   });
 
-const app1 = new Elysia()
-  .use(setup.suffix("decorator", "setup").prefix("state", "authUser"))
+const app = new Elysia()
+  .use(setup.suffix("decorator", "setup").prefix("state", "authUsers"))
   .derive(({ store }) => {
     return {
-      bearerToken: "Bearer " + store.authUserToken,
+      bearerToken: "Bearer " + store.authUsersToken,
     };
   })
 
   .get("/", ({ carbonSetup, store, bearerToken }) => ({
     carbonSetup,
-    authUserId: store.authUserId,
+    authUserId: store.authUsersId,
     bearerToken,
-  }));
+  }))
+  .get("/nullifytoken", ({ store }) => {
+    store.authUsersToken = "";
+    return {
+      a: store.authUsersToken,
+    };
+  })
 
-const app = new Elysia()
-  .get("/", () => "Hello Elysia")
-  .get("/swikar", () => ({ swikar: "done" }))
-  .listen(3000);
+  .get("/token", ({ store, bearerToken }) => ({
+    again: store.authUsersToken,
+    bearerToken,
+  }))
+  .listen(3001);
 
 console.log(
-  `🦊 Elysia is running at ${app.server?.hostname}:${app.server?.port}`
+  `🦊 Elysia is running at http://${app.server?.hostname}:${app.server?.port}`
 );
