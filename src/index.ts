@@ -53,7 +53,20 @@ const app = new Elysia()
       },
     }
   )
-  .get("/hi", () => `<div>Hi World<a href="https://youtube.com">asd</a></div>`)
+  .get(
+    "/nohtml",
+    () => `<div>Hi World<a href="https://youtube.com">asd</a></div>`
+  )
+
+  .onAfterHandle(({ response, set }) => {
+    if (response) {
+      set.headers["Content-Type"] = "text/html; charset=utf8";
+    }
+  })
+  .get(
+    "/hihtml",
+    () => `<div>Hi World<a href="https://youtube.com">asd</a></div>`
+  )
 
   .listen(3000);
 
