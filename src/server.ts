@@ -105,7 +105,7 @@ export const app = new Elysia()
   )
 
   .onAfterHandle(({ response, set }) => {
-    if (response) {
+    if (String(response) === "<") {
       set.headers["Content-Type"] = "text/html; charset=utf8";
     }
   })
@@ -116,7 +116,9 @@ export const app = new Elysia()
   //local validation
   .get("/idvalidate/:id", ({ params: { id }, headers: { f } }) => id, {
     params: t.Object({
-      id: t.Numeric(),
+      id: t.Numeric({
+        error: "id is not numeric",
+      }),
     }),
     headers: t.Object({
       f: t.String(),
@@ -139,6 +141,20 @@ export const app = new Elysia()
       console.log("local before");
     },
   })
+  .post(
+    "/sumbit-form",
+    ({ body }) => ({
+      submitted: true,
+      message: "well done sir, " + body.name.toLowerCase() + "!",
+    }),
+    {
+      body: t.Object({
+        name: t.String(),
+        email: t.String(),
+        description: t.Optional(t.String()),
+      }),
+    }
+  )
   .group(
     "/grouped",
     {
@@ -171,3 +187,5 @@ export const app = new Elysia()
 console.log(
   `🦊 Elysia is running at http://${app.server?.hostname}:${app.server?.port}`
 );
+
+export type App = typeof app;
