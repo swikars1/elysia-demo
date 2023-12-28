@@ -1,3 +1,4 @@
+import swagger from "@elysiajs/swagger";
 import { Elysia, t } from "elysia";
 const setup = new Elysia({ name: "setup" })
   .decorate({
@@ -28,6 +29,25 @@ const child2 = new Elysia().use(setup2).get("/", ({ a12 }) => a12);
 // child.ts
 
 const app = new Elysia()
+  .use(
+    swagger({
+      documentation: {
+        info: {
+          title: "Elysia Documentation",
+          version: "1.0.0",
+          contact: {
+            email: "swikarsharma@gmail.com",
+            name: "Swikar Sharma",
+            url: "https://swikarsharma.com.np",
+          },
+        },
+        tags: [
+          { name: "App", description: "General endpoints" },
+          { name: "Auth", description: "Authentication endpoints" },
+        ],
+      },
+    })
+  )
   .use(setup.suffix("decorator", "setup").prefix("state", "authUsers"))
   .derive(({ store }) => {
     return {
@@ -101,6 +121,10 @@ const app = new Elysia()
     headers: t.Object({
       f: t.String(),
     }),
+    detail: {
+      summary: "checking swagger for this route",
+      tags: ["App", "Auth"],
+    },
   })
 
   .onAfterHandle(() => {
