@@ -53,13 +53,20 @@ const app = new Elysia()
     bearerToken,
   }))
 
+  //global validation
+  .onBeforeHandle(() => ({
+    query: t.Object({
+      age: t.Numeric(),
+    }),
+  }))
+
   .get(
     "/hello",
     () => `<div>Hello Worldsss<a href="https://youtube.com">asd</a></div>`,
     {
-      query: t.Object({
-        name: t.String(),
-      }),
+      // query: t.Object({
+      //   name: t.String(),
+      // }),
       afterHandle({ response, set }) {
         set.headers["Content-Type"] = "text/html; charset=utf8";
       },
