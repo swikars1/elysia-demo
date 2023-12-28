@@ -28,7 +28,7 @@ const child2 = new Elysia().use(setup2).get("/", ({ a12 }) => a12);
 
 // child.ts
 
-const app = new Elysia()
+export const app = new Elysia()
   .use(
     swagger({
       documentation: {
