@@ -44,7 +44,7 @@ const app = new Elysia()
   .get("/nullifytoken", ({ store }) => {
     store.authUsersToken = "";
     return {
-      a: store.authUsersToken,
+      authUsersToken: store.authUsersToken,
     };
   })
 
@@ -54,11 +54,11 @@ const app = new Elysia()
   }))
 
   //global validation
-  .onBeforeHandle(() => ({
-    query: t.Object({
-      age: t.Numeric(),
-    }),
-  }))
+  // .onBeforeHandle(() => ({
+  //   query: t.Object({
+  //     age: t.Numeric(),
+  //   }),
+  // }))
 
   .get(
     "/hello",
@@ -115,7 +115,33 @@ const app = new Elysia()
       console.log("local before");
     },
   })
-
+  .group(
+    "/grouped",
+    {
+      query: t.Object({
+        name: t.String(),
+      }),
+    },
+    (app) =>
+      app.get("/one", () => "one grouped").get("/two", () => "grouped two")
+  )
+  .guard(
+    {
+      query: t.Object({
+        social: t.Numeric(),
+      }),
+    },
+    (app) =>
+      app
+        .get("/gaurded_single", ({ query }) => ({
+          gaurdedsingle: "gaurded single",
+          socialValue: query.social,
+        }))
+        .get("gaurded_single2", ({ query }) => ({
+          gaurdedsingle: "gaurded single 2",
+          socialValue: query.social,
+        }))
+  )
   .listen(3000);
 
 console.log(
